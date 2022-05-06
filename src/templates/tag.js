@@ -14,7 +14,7 @@ const TagTemplate = ({ data, pageContext }) => (
         Tag:{" "}
         {pageContext.tag.charAt(0).toUpperCase() + pageContext.tag.slice(1)}
       </Heading>
-      <PostListing postEdges={data.allMarkdownRemark.edges} />
+      <PostListing postEdges={data?.allMarkdownRemark?.edges} />
     </main>
   </Layout>
 );

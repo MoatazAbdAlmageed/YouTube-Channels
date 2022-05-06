@@ -2,6 +2,7 @@ const path = require("path");
 const _ = require("lodash");
 const moment = require("moment");
 const siteConfig = require("./data/SiteConfig");
+const { paginate } = require("gatsby-awesome-pagination");
 
 exports.onCreateNode = ({ node, actions, getNode }) => {
   const { createNodeField } = actions;
@@ -79,54 +80,64 @@ exports.createPages = async ({ graphql, actions }) => {
   const tagSet = new Set();
   const categorySet = new Set();
 
-  const postsEdges = markdownQueryResult.data.allMarkdownRemark.edges;
+  const postsEdges = markdownQueryResult.data?.allMarkdownRemark?.edges;
 
-  postsEdges.sort((postA, postB) => {
-    const dateA = moment(
-      postA.node.frontmatter.date,
-      siteConfig.dateFromFormat
-    );
+  // postsEdges.sort((postA, postB) => {
+  //   const dateA = moment(
+  //     postA.node.frontmatter.date,
+  //     siteConfig.dateFromFormat
+  //   );
 
-    const dateB = moment(
-      postB.node.frontmatter.date,
-      siteConfig.dateFromFormat
-    );
+  //   const dateB = moment(
+  //     postB.node.frontmatter.date,
+  //     siteConfig.dateFromFormat
+  //   );
 
-    if (dateA.isBefore(dateB)) return 1;
-    if (dateB.isBefore(dateA)) return -1;
+  //   if (dateA.isBefore(dateB)) return 1;
+  //   if (dateB.isBefore(dateA)) return -1;
 
-    return 0;
+  //   return 0;
+  // });
+  alert(123);
+  console.log("postsEdges", postsEdges);
+
+  paginate({
+    createPage, // The Gatsby `createPage` function
+    items: postsEdges, // An array of objects
+    itemsPerPage: 10, // How many items you want per page
+    pathPrefix: "/blog", // Creates pages like `/blog`, `/blog/2`, etc
+    component: postPage,
   });
 
-  postsEdges.forEach((edge, index) => {
+  postsEdges.map((edge, index) => {
     if (edge.node.frontmatter.tags) {
-      edge.node.frontmatter.tags.forEach((tag) => {
+      edge.node.frontmatter.tags.map((tag) => {
         tagSet.add(tag);
       });
     }
 
     if (edge.node.frontmatter.categories) {
-      edge.node.frontmatter.categories.forEach((category) => {
+      edge.node.frontmatter.categories.map((category) => {
         categorySet.add(category);
       });
     }
 
-    const nextID = index + 1 < postsEdges.length ? index + 1 : 0;
-    const prevID = index - 1 >= 0 ? index - 1 : postsEdges.length - 1;
-    const nextEdge = postsEdges[nextID];
-    const prevEdge = postsEdges[prevID];
+    // const nextID = index + 1 < postsEdges.length ? index + 1 : 0;
+    // const prevID = index - 1 >= 0 ? index - 1 : postsEdges.length - 1;
+    // const nextEdge = postsEdges[nextID];
+    // const prevEdge = postsEdges[prevID];
 
-    createPage({
-      path: edge.node.fields.slug,
-      component: postPage,
-      context: {
-        slug: edge.node.fields.slug,
-        nexttitle: nextEdge.node.frontmatter.title,
-        nextslug: nextEdge.node.fields.slug,
-        prevtitle: prevEdge.node.frontmatter.title,
-        prevslug: prevEdge.node.fields.slug,
-      },
-    });
+    // createPage({
+    //   path: edge.node.fields.slug,
+    //   component: postPage,
+    //   context: {
+    //     slug: edge.node.fields.slug,
+    //     nexttitle: nextEdge.node.frontmatter.title,
+    //     nextslug: nextEdge.node.fields.slug,
+    //     prevtitle: prevEdge.node.frontmatter.title,
+    //     prevslug: prevEdge.node.fields.slug,
+    //   },
+    // });
   });
   console.log("\n".repeat);
   console.log("************ [...tagSet] **************");

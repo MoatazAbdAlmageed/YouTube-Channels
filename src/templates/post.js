@@ -35,7 +35,7 @@ const BlogTags = (props) => {
 };
 
 export default ({ data, pageContext }) => {
-  const { slug, nexttitle, nextslug, prevtitle, prevslug } = pageContext;
+  const { slug } = pageContext;
   const postNode = data.markdownRemark;
   const post = postNode.frontmatter;
   if (!post.id) {
@@ -174,20 +174,6 @@ export default ({ data, pageContext }) => {
       </Box>
 
       <SocialLinks postPath={slug} postNode={postNode} />
-      <nav>
-        <ul className={styles.pagination}>
-          <li>
-            <Link to={prevslug} rel="prev">
-              ← {prevtitle}
-            </Link>
-          </li>
-          <li>
-            <Link to={nextslug} rel="next">
-              {nexttitle}→
-            </Link>
-          </li>
-        </ul>
-      </nav>
     </Layout>
   );
 };

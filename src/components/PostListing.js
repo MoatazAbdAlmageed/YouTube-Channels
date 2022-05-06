@@ -15,11 +15,15 @@ import React from "react";
 import { FaYoutube } from "react-icons/fa";
 import { FaStar } from "react-icons/fa";
 import uuid from "react-uuid";
+import { Link } from "gatsby";
 
-const PostListing = ({ postEdges }) => {
+const PostListing = (data) => {
+  console.log("data");
+  console.log(data);
+  const { postEdges, previousPagePath, nextPagePath } = data;
   const getPostList = () => {
     const postList = [];
-    postEdges.forEach((postEdge) => {
+    postEdges?.forEach((postEdge) => {
       postList.push({
         path: postEdge.node.fields.slug,
         tags: postEdge.node.frontmatter.tags,
@@ -36,7 +40,8 @@ const PostListing = ({ postEdges }) => {
   };
 
   const postList = getPostList();
-
+  console.log("postList");
+  console.log("postList", postList);
   const emptyQuery = "";
 
   const [state, setState] = React.useState({
@@ -68,9 +73,9 @@ const PostListing = ({ postEdges }) => {
   const { filteredData, query } = state;
   const hasSearchResults = filteredData && query;
   const rowPosts = hasSearchResults ? filteredData : postList;
-  const posts = [...new Set(rowPosts)]
-    .filter(({ title }) => title !== "Template")
-    .sort((a, b) => (a?.tags?.length > b?.tags?.length ? -1 : 1));
+  const posts = [...new Set(rowPosts)].sort((a, b) =>
+    a?.tags?.length > b?.tags?.length ? -1 : 1
+  );
 
   return (
     <Stack>
@@ -152,6 +157,11 @@ const PostListing = ({ postEdges }) => {
             )}
           </Box>
         ))}
+        <div>
+          {/* previousPageLink and nextPageLink were added by the plugin */}
+          <Link to={previousPagePath}>Previous</Link>
+          <Link to={nextPagePath}>Next</Link>
+        </div>
       </SimpleGrid>
     </Stack>
   );
